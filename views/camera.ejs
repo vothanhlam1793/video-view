@@ -29,7 +29,7 @@
 
         <div>
             <h2>{{message}}</h2>
-            <select v-model="choice">
+            <select v-model="choice" style="max-width:90%;">
                 <option v-for="uri in uris">{{uri.uri}}</option>
             </select>
             <button v-on:click="change()">RUN</button>
