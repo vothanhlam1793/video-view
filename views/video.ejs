@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <script src="hls.min.js"></script>
+    <script src="/static/hls.min.js"></script>
 </head>
 
 <body>
@@ -12,7 +12,8 @@
         function video_hls() {
             var video = document.getElementById('video');
             const urlParams = new URLSearchParams(window.location.search);
-            var url = "http://dev.creta.tech:8888/stream/" + urlParams.get("id") + "/index.m3u8";
+            // var id = <%= id %>;
+            var url = "http://dev.creta.tech:8888/stream/<%= id %>/index.m3u8";
             if (Hls.isSupported()) {
                 var hls = new Hls();
                 hls.loadSource(url);

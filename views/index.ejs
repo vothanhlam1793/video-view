@@ -3,7 +3,7 @@
 <head>
     <!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="hls.min.js"></script>
+    <script src="/static/hls.min.js"></script>
 </head>
 
 <body>
@@ -26,7 +26,7 @@
                 message: 'Hello Vue!',
                 uris: [],
                 choice: "",
-                urlss: "http://localhost:8887/video.html?id=camera1"
+                urlss: window.location.origin + "/video?id=camera1"
             },
             mounted: function () {
                 
@@ -41,7 +41,7 @@
             },
             methods: {
                 change: function () {
-                    this.url = "http://localhost:8887/video.html?id=" + this.choice.split("/")[2];
+                    this.url = window.location.origin + "/video?id=" + this.choice.split("/")[2];
                     console.log("NEW", this.url)
                     document.getElementById('some_frame_id').contentWindow.location.replace(this.url);
                 }
