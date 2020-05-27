@@ -11,56 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="/statichls.min.js"></script>
     <style>
-            iframe {
-  width: 800;
-  height: 480;
-}
+        
     </style>
 </head>
 
 <body>
-    <div id="app">
-        <iframe id="some_frame_id" :src="urlss" frameborder="0" allowfullscreen></iframe>
-
-        <div>
-            <h2>{{message}}</h2>
-            <select v-model="choice">
-                <option v-for="uri in uris">{{uri.uri}}</option>
-            </select>
-            <button v-on:click="change()">RUN</button>
-        </div>
-
-    </div>
-    <script type="text/javascript">
-        var app = new Vue({
-            el: '#app',
-            data: {
-                message: 'Hello Vue!',
-                uris: [],
-                choice: "",
-                urlss: window.location.origin + "/video?id=camera1"
-            },
-            mounted: function () {
-                
-            },
-            created() {
-                fetch("http://dev.creta.tech:8888/list").then((res) => {
-                    res.json().then((a) => {
-                        console.log(a);
-                        this.uris = a;
-                    })
-                })
-            },
-            methods: {
-                change: function () {
-                    this.url = window.location.origin + "/video?id=" + this.choice.split("/")[2];
-                    console.log("NEW", this.url)
-                    document.getElementById('some_frame_id').contentWindow.location.replace(this.url);
-                }
-            }
-
-        })
-    </script>
+    <a href="/test">Xem camera</a>
 </body>
 
 </html>

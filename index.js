@@ -17,4 +17,8 @@ app.get("/video", function(req, res){
 
 })
 
+app.get("/test", function(req, res){
+    res.render("camera");
+})
+
 app.listen(5000);

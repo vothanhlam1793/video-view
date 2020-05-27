@@ -1,0 +1,94 @@
+<html>
+
+<head>
+
+    <title>KALA - CAMERA</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/static/hls.min.js"></script>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>KALA CAMERA</div>
+        <div class="container">
+            <video id="video" controls>
+
+            </video>
+        </div>
+
+        <div>
+            <h2>{{message}}</h2>
+            <select v-model="choice">
+                <option v-for="uri in uris">{{uri.uri}}</option>
+            </select>
+            <button v-on:click="change()">RUN</button>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        var url = "http://dev.creta.tech:8888/stream/camera1/index.m3u8";
+
+        function video_hls() {
+            var video = document.getElementById('video');
+            const urlParams = new URLSearchParams(window.location.search);
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('canplay', function () {
+                    video.play();
+                });
+            } else {
+                alert("Nothing")
+                console.log("Notthing");
+            }
+        }
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!',
+                uris: [],
+                choice: "",
+                urlss: window.location.origin + "/video?id=camera1"
+            },
+            mounted: function () {
+                video_hls();
+            },
+            created() {
+                fetch("http://dev.creta.tech:8888/list").then((res) => {
+                    res.json().then((a) => {
+                        console.log(a);
+                        this.uris = a;
+                    })
+                })
+            },
+            methods: {
+                change: function () {
+                    this.url = "http://dev.creta.tech:8888/stream/" +this.choice.split("/")[2] + "/index.m3u8";
+                    console.log("NEW", this.url)
+                    url = this.url;
+                    video_hls()
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>
