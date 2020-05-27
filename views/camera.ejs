@@ -27,12 +27,11 @@
             </video>
         </div>
 
-        <div>
-            <h2>{{message}}</h2>
-            <select v-model="choice" style="max-width:100%;">
+        <div class="form-group">
+            <label for="usr">Chọn camera</label>
+            <select class="form-control"  v-model="choice" style="max-width:100%;" v-on:change="change()">
                 <option v-for="uri in uris">{{uri.uri}}</option>
             </select>
-            <button v-on:click="change()">RUN</button>
         </div>
 
     </div>
