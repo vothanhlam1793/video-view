@@ -5,17 +5,18 @@
     <title>KALA - CAMERA</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="/static/bootstrap.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/static/bootstrap.css">
 
-        <!-- jQuery library -->
-        <script src="/static/jquery.min.js"></script>
-    
-        <!-- Popper JS -->
-        <script src="/static/popper.js"></script>
-    
-        <!-- Latest compiled JavaScript -->
-        <script src="/static/bootstrap.js"></script><script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- jQuery library -->
+    <script src="/static/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="/static/popper.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="/static/bootstrap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="/static/hls.min.js"></script>
     <style>
         video {
@@ -28,31 +29,45 @@
 <body>
     <div class="container" id="app">
         <div>KALA CAMERA</div>
-        <div>
-            <video id="video" controls>
+        <div v-for="u in uris" style="padding: 20px;">
+            <video :id="u.id" controls>
 
             </video>
+            <div style="padding: 5px;">
+                <button class="btn btn-primary" v-on:click="start_video(u.id, u.url)">Start</button> | <button
+                    class="btn btn-warning" v-on:click="stop_video(u.id)" disabled>Stop</button>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="usr">Chọn camera</label>
-            <select class="form-control"  v-model="choice" style="max-width:100%;" v-on:change="change()">
-                <option v-for="uri in uris">{{uri.uri}}</option>
-            </select>
-        </div>
-
     </div>
     <script type="text/javascript">
-        var url = "http://dev.creta.tech:8888/stream/camera1/index.m3u8";
-        function video_hls(id_video) {
+        var a_hls = [];
+
+        function video_hls(id_video, url) {
+            console.log("START: ", id_video);
             var video = document.getElementById(id_video);
             if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                var ah = a_hls.filter((e) => {
+                    return e.id == id_video
+                })
+                var oh;
+                if (ah.length == 1) {
+                    oh = ah[0];
+                } else {
+                    oh = {
+                        hls: new Hls(),
+                        id: id_video,
+                    }
+
+                }
+
+                oh.hls.loadSource(url);
+                oh.hls.attachMedia(video);
+                oh.hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     video.play();
                 });
+                if (ah.length == 0) {
+                    a_hls.push(oh);
+                }
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.addEventListener('canplay', function () {
@@ -72,22 +87,34 @@
                 urlss: window.location.origin + "/video?id=camera1"
             },
             mounted: function () {
-                video_hls("video");
+                /* Khoi tao mot thu gi do */
             },
             created() {
                 fetch("http://dev.creta.tech:8888/list").then((res) => {
                     res.json().then((a) => {
-                        console.log(a);
+                        // console.log(a);
                         this.uris = a;
+                        this.uris.forEach((e) => {
+                            e.url = "http://dev.creta.tech:8888/stream/" + e.uri.split(
+                                "/")[2] + "/index.m3u8";
+                        })
+                        console.log(this.uris);
                     })
                 })
             },
             methods: {
-                change: function () {
-                    this.url = "http://dev.creta.tech:8888/stream/" +this.choice.split("/")[2] + "/index.m3u8";
-                    console.log("NEW", this.url)
-                    url = this.url;
-                    video_hls()
+                start_video: video_hls,
+                stop_video: function (id_video) {
+                    console.log("STOP:", id_video);
+                    var ah = a_hls.filter((e) => {
+                        return e.id == id_video;
+                    })
+                    if(ah.length == 1){
+                        delete a_hls[a_hls.indexOf(ah)];
+                        console.log("Da xoa xong");
+                    } else {
+                        console.log("Khong co gi!");
+                    }
                 }
             }
 
