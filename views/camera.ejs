@@ -42,8 +42,10 @@
     <script type="text/javascript">
         var a_hls = [];
 
-        function video_hls(id_video, url) {
+        function video_hls(id_video, _url) {
             console.log("START: ", id_video);
+            var date = new Date();
+            var url = _url + "?date=" + date.getTime(); 
             var video = document.getElementById(id_video);
             if (Hls.isSupported()) {
                 var ah = a_hls.filter((e) => {
