@@ -44,10 +44,8 @@
     </div>
     <script type="text/javascript">
         var url = "http://dev.creta.tech:8888/stream/camera1/index.m3u8";
-
-        function video_hls() {
-            var video = document.getElementById('video');
-            const urlParams = new URLSearchParams(window.location.search);
+        function video_hls(id_video) {
+            var video = document.getElementById(id_video);
             if (Hls.isSupported()) {
                 var hls = new Hls();
                 hls.loadSource(url);
@@ -74,7 +72,7 @@
                 urlss: window.location.origin + "/video?id=camera1"
             },
             mounted: function () {
-                video_hls();
+                video_hls("video");
             },
             created() {
                 fetch("http://dev.creta.tech:8888/list").then((res) => {
